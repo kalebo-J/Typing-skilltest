@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Typing Speed Test</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        background: #fff;
+        width: 500px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .text-box {
+        background: #f1f1f1;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        font-size: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        resize: none;
+    }
+
+    .timer {
+        margin-top: 10px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    button {
+        margin-top: 10px;
+        width: 100%;
+        padding: 10px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* POPUP */
+    .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup-content {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        text-align: center;
+        width: 350px;
+    }
+
+    .popup h3 {
+        margin-bottom: 10px;
+    }
+
+    .green {
+        color: green;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Typing Speed Test</h2>
+
+    <div class="text-box" id="testText">
+        The quick brown fox jumps over the lazy dog. Practice typing to improve speed and accuracy.
+    </div>
+
+    <textarea id="typingArea" placeholder="Start typing here..." disabled></textarea>
+
+    <div class="timer" id="timer">Time: 03:00</div>
+
+    <button onclick="startTest()">Start Test</button>
+</div>
+
+<!-- POPUP RESULT -->
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <h3>Typing Test Complete!</h3>
+        <p>You typed the <b>3 Minute Typing Test</b>.</p>
+        <p>Your speed was <span class="green" id="wpm"></span> WPM with 
+        <span class="green" id="accuracy"></span>% accuracy!</p>
+        <button onclick="location.reload()">Restart</button>
+    </div>
+</div>
+
+<script>
+    const testText = document.getElementById("testText").innerText;
+    const typingArea = document.getElementById("typingArea");
+    const timerDisplay = document.getElementById("timer");
+    const popup = document.getElementById("popup");
+
+    let time = 180; // 3 minutes
+    let timer;
+
+    function startTest() {
+        typingArea.disabled = false;
+        typingArea.focus();
+        timer = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        timerDisplay.innerText =
+            `Time: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (time === 0) {
+            clearInterval(timer);
+            finishTest();
+        }
+        time--;
+    }
+
+    function finishTest() {
+        typingArea.disabled = true;
+
+        let typedText = typingArea.value.trim();
+        let wordsTyped = typedText.split(/\s+/).length;
+        let wpm = Math.round(wordsTyped / 3);
+
+        let correctChars = 0;
+        for (let i = 0; i < typedText.length; i++) {
+            if (typedText[i] === testText[i]) {
+                correctChars++;
+            }
+        }
+
+        let accuracy = Math.round((correctChars / typedText.length) * 100 || 0);
+
+        document.getElementById("wpm").innerText = wpm;
+        document.getElementById("accuracy").innerText = accuracy;
+
+        popup.style.display = "flex";
+    }
+</script>
+
+</body>
+</html>
